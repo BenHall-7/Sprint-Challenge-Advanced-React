@@ -1,42 +1,36 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './App.css';
 import axios from 'axios';
 import PlayerList from './comps/PlayerList';
+import usePlayers from './hooks/usePlayers';
 
 export const deleteByID = (players, id) => {
-  console.log("bh: I was here");
-  players.splice(players.findIndex(p => p.id === id), 1);
-  return [...players];
+  let copy = [...players];
+  copy.splice(copy.findIndex(p => p.id === id), 1);
+  return copy;
 }
 
-export default class App extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      players: [],
+const App = () => {
+  let [players, setPlayers, hadStorage] = usePlayers([]);
+
+  useEffect(() => {
+    if (!hadStorage) {
+      axios.get("http://localhost:5000/api/players")
+        .then(res => {
+          setPlayers(res.data);
+        })
+        .catch(console.error);
     }
-  }
+  }, []);
 
-  componentDidMount() {
-    axios.get("http://localhost:5000/api/players")
-      .then(res => {
-        console.log(res.data);
-        this.setState({players: res.data});
-      })
-      .catch(console.error);
-  }
-  
-  render() {
-    let {players} = this.state;
-
-    return (
-      <div className="App">
-        <PlayerList
-          players={players}
-          setPlayers={(p) => this.setState({players: p})}
-          deleteByID={deleteByID}
-        />
-      </div>
-    );
-  }
+  return (
+    <div className="App">
+      <PlayerList
+        players={players}
+        deleteByID={(id) => setPlayers(deleteByID(players, id))}
+      />
+    </div>
+  );
 }
+
+export default App;
