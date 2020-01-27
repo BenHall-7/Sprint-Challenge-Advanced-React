@@ -3,6 +3,12 @@ import './App.css';
 import axios from 'axios';
 import PlayerList from './comps/PlayerList';
 
+export const deleteByID = (players, id) => {
+  console.log("bh: I was here");
+  players.splice(players.findIndex(p => p.id === id), 1);
+  return [...players];
+}
+
 export default class App extends React.Component {
   constructor() {
     super();
@@ -21,9 +27,15 @@ export default class App extends React.Component {
   }
   
   render() {
+    let {players} = this.state;
+
     return (
       <div className="App">
-        <PlayerList players={this.state.players}/>
+        <PlayerList
+          players={players}
+          setPlayers={(p) => this.setState({players: p})}
+          deleteByID={deleteByID}
+        />
       </div>
     );
   }
