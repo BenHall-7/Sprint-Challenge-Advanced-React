@@ -6,13 +6,12 @@ export default class PlayerList extends React.Component {
         let {players, deleteByID} = this.props;
         return (
             <div>
-                {players.map(
-                    player =>
-                        <Player
-                            player={player}
-                            del={() => deleteByID(player.id)}
-                            key={player.id}
-                        />
+                {players.map(player =>
+                    <Player
+                        player={player}
+                        del={() => deleteByID(player.id)}
+                        key={player.id}
+                    />
                 )}
             </div>
         )
